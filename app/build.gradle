@@ -1,0 +1,72 @@
+apply plugin: 'com.android.application'
+
+def androidID = rootProject.ext.androidID
+def appID = rootProject.ext.appID
+android {
+    compileSdkVersion androidID.compileSdkVersion
+    buildToolsVersion androidID.buildToolsVersion
+
+    defaultConfig {
+        applicationId appID.app
+        minSdkVersion androidID.minSdkVersion
+        targetSdkVersion androidID.targetSdkVersion
+        versionCode androidID.versionCode
+        versionName androidID.versionName
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // 不分包
+        multiDexEnabled false
+
+        //让Java代码也可以用 给Java代码标记，正式环境和测试环境的标记
+        //这个方法接收三个非空的参数 ： 参数一 ：确定值的类型  参数二：指定key的名字 参数三：传值 （必须是String）
+        buildConfigField("boolean", "isRelease", String.valueOf(isRelease))
+
+        // 给注解处理器传值
+        javaCompileOptions{
+            annotationProcessorOptions{
+                arguments = [moduleName:project.getName(),packageNameForAPT:packageNameForAPT]
+            }
+
+        }
+    }
+
+    buildTypes {
+
+        // 切换debug 和 release
+        debug{
+            buildConfigField("String","debug","\"${url.debug}\"")
+        }
+
+        release {
+
+            buildConfigField("String","release","\"${url.release}\"")
+
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation project(path: ':arouter_annotation')
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+    // 使用注解处理器
+    annotationProcessor project(':arouter_compiler')
+
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}

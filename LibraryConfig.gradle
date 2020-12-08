@@ -1,0 +1,80 @@
+// 在这里动态的改变 集成环境和组件化环境
+if(isRelease){
+    // 正式环境 各个模块不能独立运行
+    apply plugin: 'com.android.library'
+
+}else{
+    // 测试环境 各个模块可以独立运行
+    apply plugin: 'com.android.application'
+}
+
+android {
+    compileSdkVersion androidID.compileSdkVersion
+    buildToolsVersion androidID.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion androidID.minSdkVersion
+        targetSdkVersion androidID.targetSdkVersion
+        versionCode androidID.versionCode
+        versionName androidID.versionName
+
+        testInstrumentationRunner androidID.testInstrumentationRunner
+        consumerProguardFiles "consumer-rules.pro"
+
+        // 这个方法接收三个非空的参数，第一个：确定值的类型，第二个：指定key的名字，第三个：传值（必须是String）
+        // 为什么需要定义这个？因为src代码中有可能需要用到跨模块交互，如果是组件化模块显然不行
+        // 切记：不能在android根节点，只能在defaultConfig或buildTypes节点下
+        // 让Java代码也能用
+        buildConfigField("boolean", "isRelease", String.valueOf(isRelease))
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    sourceSets{
+        main{
+
+            // 可以用于切换正式环境和测试环境的AndroidManifest.xml文件
+//            if(isRelease){
+//                // 正式环境 使用正式环境的AndroidManifest.xml文件
+//                manifest.srcFile "src/main/AndroidManifest.xml"
+//            }else{
+//                // 测试环境，debug的AndroidManifest.xml文件生效
+//                manifest.srcFile 'src/main/debug/AndroidManifest.xml' // 生效
+//            }
+
+//            java{
+//                // release 时，目录下的代码不要打包进apk
+//                exclude "**/debug/**" // debug文件夹下的所有文件不要打包进apk
+//            }
+        }
+    }
+}
+
+dependencies {
+
+    dependenciesID.each {k,v -> implementation v}
+
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+    // 依赖公共基础库
+    implementation project(":common")
+    // 依赖注解模块
+    implementation project(":arouter_annotation")
+    // 依赖注解处理器
+    implementation project(":arouter_compiler")
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}

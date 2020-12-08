@@ -1,0 +1,26 @@
+apply from : '../LibraryConfig.gradle'
+
+def appID = rootProject.ext.appID
+android {
+    defaultConfig {
+        // 在这里处理 集成化环境和组件化环境的applicationId
+        if(!isRelease){
+            // 测试环境 能独立运行，必须要有applicationId
+            applicationId appID.personal
+        }else{
+            // 正式环境，不能独立运行，不需要有 applicationId
+        }
+
+        //传值给注解处理器 切记：必须写在defaultConfig节点下
+        javaCompileOptions{
+            annotationProcessorOptions{
+                arguments = [moduleName:project.getName(),packageNameForAPT:packageNameForAPT]
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+}
