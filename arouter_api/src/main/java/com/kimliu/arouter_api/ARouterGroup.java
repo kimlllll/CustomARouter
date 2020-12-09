@@ -2,7 +2,7 @@ package com.kimliu.arouter_api;
 
 import java.util.Map;
 
-public interface ArouterGroup {
+public interface ARouterGroup {
 
 
     Map<String,Class<? extends ARouterPath>> getGroupMap();

@@ -17,11 +17,12 @@ public interface ProcessorConfig {
     // Activity 全类名
     String ACTIVITY_PACKAGENAME = "android.app.Activity";
 
+
     // Group 标记
-    String AROUTER_API_GROUP = AROUTE_PACKAGE + ".ARouterGroup";
+    String AROUTER_API_GROUP ="com.kimliu.arouter_api.ARouterGroup";
 
     //path 标记
-    String AROUTER_API_PATH = AROUTE_PACKAGE + ".ARouterPath";
+    String AROUTER_API_PATH = "com.kimliu.arouter_api.ARouterPath";
 
     // path 方法名
     String PATH_METHOD_NAME = "getPathMap";

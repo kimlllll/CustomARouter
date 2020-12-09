@@ -27,7 +27,6 @@ ext{
 
     appID =
             [
-                    app:"com.kimliu.customarouter",
                     order:"com.kimliu.order",
                     personal:"com.kimliu.personal",
             ]

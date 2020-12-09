@@ -1,13 +1,12 @@
 apply plugin: 'com.android.application'
 
 def androidID = rootProject.ext.androidID
-def appID = rootProject.ext.appID
 android {
     compileSdkVersion androidID.compileSdkVersion
     buildToolsVersion androidID.buildToolsVersion
 
     defaultConfig {
-        applicationId appID.app
+        applicationId androidID.applicationId
         minSdkVersion androidID.minSdkVersion
         targetSdkVersion androidID.targetSdkVersion
         versionCode androidID.versionCode
@@ -57,13 +56,15 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    implementation project(path: ':arouter_annotation')
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     // 使用注解处理器
     annotationProcessor project(':arouter_compiler')
+    implementation project(path: ':arouter_annotation')
+    implementation project(path: ':arouter_api')
 
 }
 

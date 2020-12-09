@@ -84,6 +84,7 @@ public class ARouterProcesser extends AbstractProcessor {
         elementTool = processingEnvironment.getElementUtils();
         messager = processingEnvironment.getMessager();
         filer = processingEnvironment.getFiler();
+        typeTool = processingEnvironment.getTypeUtils();
 
         /*
         接收从APP传递过来的数据 在要传值的module的build.gradle文件中写上
@@ -179,12 +180,14 @@ public class ARouterProcesser extends AbstractProcessor {
         }
 
 
-        TypeElement pathType = elementTool.getTypeElement(ProcessorConfig.AROUTER_API_GROUP);
-        TypeElement groupType = elementTool.getTypeElement(ProcessorConfig.AROUTER_API_PATH);
+        TypeElement pathType = elementTool.getTypeElement(ProcessorConfig.AROUTER_API_PATH);
+        TypeElement groupType = elementTool.getTypeElement(ProcessorConfig.AROUTER_API_GROUP);
+
+        messager.printMessage(Diagnostic.Kind.NOTE,"==> pathType:"+pathType);
+        messager.printMessage(Diagnostic.Kind.NOTE,"==> groupType:"+groupType);
 
         createPathClass(pathType);
         createGroupClass(pathType,groupType);
-
 
         return true;
     }
@@ -358,19 +361,13 @@ public class ARouterProcesser extends AbstractProcessor {
                         .build() // JavaFile构建完成
                         .writeTo(filer); // 文件生成器开始生成类文件
             } catch (IOException e) {
+
                 e.printStackTrace();
             }
 
             // 仓库二 缓存二  非常重要一步，注意：PATH 路径文件生成出来了，才能赋值路由组mAllGroupMap
             mAllGroupMap.put(entry.getKey(), finalClassName);
-
-
         }
-
-
-
-
-
     }
 
     /**
@@ -384,13 +381,13 @@ public class ARouterProcesser extends AbstractProcessor {
         //path 必须以 “/” 开头
         if(ProcesserUtils.isEmpty(path) || !path.startsWith("/")){
             // messager 打印信息 如果类型时ERROR 那么 程序必崩
-            messager.printMessage(Diagnostic.Kind.ERROR,"@ARouter中的Path必须要以 / 开头");
+            messager.printMessage(Diagnostic.Kind.NOTE,"@ARouter中的Path必须要以 / 开头");
             return false;
         }
 
         // "/"最后一次出现的位置 如果是第一位 没写组名
         if(path.lastIndexOf("/") == 0){
-            messager.printMessage(Diagnostic.Kind.ERROR,"@ARouter中的Path未按规范填写，应如：/app/MainActivity");
+            messager.printMessage(Diagnostic.Kind.NOTE,"@ARouter中的Path未按规范填写，应如：/app/MainActivity");
             return false;
         }
 
@@ -404,7 +401,7 @@ public class ARouterProcesser extends AbstractProcessor {
 
         if(!ProcesserUtils.isEmpty(groupName)){
             if(!groupName.equals(mOptions)){
-                messager.printMessage(Diagnostic.Kind.ERROR,"@ARouter中的group必须和组件名一致");
+                messager.printMessage(Diagnostic.Kind.NOTE,"@ARouter中的group必须和组件名一致");
                 return false;
             }
             routeBean.setGroup(groupName);

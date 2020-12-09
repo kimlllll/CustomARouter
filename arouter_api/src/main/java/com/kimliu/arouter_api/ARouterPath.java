@@ -6,7 +6,6 @@ import java.util.Map;
 
 public interface ARouterPath {
 
-
-    Map<String, RouteBean> getPath();
+    Map<String, RouteBean> getPathMap();
 
 }

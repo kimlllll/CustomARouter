@@ -13,7 +13,6 @@ dependencies {
 
     // 引入annotation，处理@ARouter注解
     implementation project(':arouter_annotation')
-
 }
 
 sourceCompatibility = "1.7"
