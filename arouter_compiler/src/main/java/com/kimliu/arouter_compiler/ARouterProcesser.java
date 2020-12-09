@@ -43,7 +43,7 @@ import javax.tools.Diagnostic;
 // 用来生成 META-INF/services/javax.annotation.processing.Processor 文件
 @AutoService(Processor.class)
 @SupportedSourceVersion(SourceVersion.RELEASE_7) //指定的JDK版本
-@SupportedAnnotationTypes({ProcessorConfig.AROUTE_PACKAGE}) // 作用于哪个注解
+@SupportedAnnotationTypes({ProcessorConfig.AROUTE_PATH}) // 作用于哪个注解
 @SupportedOptions({ProcessorConfig.OPTIONS, ProcessorConfig.PACKAGENAMEFORAPT}) // 接收由别的组件传递过来的组名
 public class ARouterProcesser extends AbstractProcessor {
 
@@ -189,7 +189,7 @@ public class ARouterProcesser extends AbstractProcessor {
         createPathClass(pathType);
         createGroupClass(pathType,groupType);
 
-        return true;
+        return true; // 返回true 会运行两次 执行一次 再检测一次 是否成功生成了代码 返回false 只运行一次 不检测了
     }
 
     /**

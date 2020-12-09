@@ -6,7 +6,7 @@ package com.kimliu.arouter_compiler.config;
 public interface ProcessorConfig {
 
     // ARouter 的路径
-    String AROUTE_PACKAGE = "com.kimliu.arouter_annotation.ARouter";
+    String AROUTE_PATH = "com.kimliu.arouter_annotation.ARouter";
 
     // 接收参数 key 接收每个Module传递过来的 组名
     String OPTIONS = "moduleName";
@@ -40,6 +40,9 @@ public interface ProcessorConfig {
     // 路由组，GROUP 最终要生成的 文件名
     String GROUP_FILE_NAME = "ARouter$$Group$$";
 
+
+    // 获取参数的注解 路径
+    String PARAMETERGET_PATH = "com.kimliu.arouter_api.ParameterGet";
 
 
 
