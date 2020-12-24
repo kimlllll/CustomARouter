@@ -42,7 +42,17 @@ public interface ProcessorConfig {
 
 
     // 获取参数的注解 路径
-    String PARAMETERGET_PATH = "com.kimliu.arouter_api.ParameterGet";
+    String PARAMETER_ANNOTATION_PATH = "com.kimliu.arouter_api.Parameter";
+
+    // ParameterGet 接口的路径
+    String PARAMETER_GET_PATH = "com.kimliu.arouter_api.ParameterGet";
+
+
+    // ARouter api 的 ParameterGet 方法参数的名字
+    String PARAMETER_NAME = "targetParameter";
+
+    //ARouter api 的 ParmeterGet 方法的名字
+    String PARAMETER_METHOD_NAME = "getParameter";
 
 
 

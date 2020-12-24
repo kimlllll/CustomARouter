@@ -5,10 +5,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(ElementType.PARAMETER)
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.CLASS)
-public @interface ParameterGet {
+public @interface Parameter {
 
+
+    // 不填写name的注解值表示该属性名就是key，填了就用注解值作为key
     String name() default "";
 
 }
