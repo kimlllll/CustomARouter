@@ -54,6 +54,11 @@ public interface ProcessorConfig {
     //ARouter api 的 ParmeterGet 方法的名字
     String PARAMETER_METHOD_NAME = "getParameter";
 
+    // String全类名
+    public static final String STRING = "java.lang.String";
+
+    // ARouter aip 的 ParmeterGet 的 生成文件名称 $$Parameter
+    String PARAMETER_FILE_NAME = "$$Parameter";
 
 
 

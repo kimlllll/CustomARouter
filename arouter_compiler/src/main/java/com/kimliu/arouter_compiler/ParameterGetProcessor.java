@@ -5,9 +5,11 @@ import com.kimliu.arouter_annotation.Parameter;
 import com.kimliu.arouter_compiler.config.ProcessorConfig;
 import com.kimliu.arouter_compiler.utils.ProcesserUtils;
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeName;
-
+import com.squareup.javapoet.TypeSpec;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,9 +26,11 @@ import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
+import javax.tools.Diagnostic;
 
 @AutoService(Processor.class) // 开启AutoService
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
@@ -51,7 +55,7 @@ public class ParameterGetProcessor extends AbstractProcessor {
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnvironment) {
-        super.init(processingEnv);
+        super.init(processingEnvironment);
         elementTool = processingEnvironment.getElementUtils();
         messager = processingEnvironment.getMessager();
         filer = processingEnvironment.getFiler();
@@ -108,18 +112,37 @@ public class ParameterGetProcessor extends AbstractProcessor {
                     // 获取类名
                     ClassName className = ClassName.get(typeElement);
 
+                    ParameterFactory factory = new ParameterFactory.Builder(parameterSpec)
+                            .setMessager(messager)
+                            .setClassName(className)
+                            .build();
 
-                };
+                    factory.addFristStatement();
+                    // 循环生成后续代码 根据被@Parameter标记的参数个数循环
+                    for (Element element : entry.getValue()) {
+                        factory.buildStatement(element);
+                    }
 
+                    // 生成类文件 类名$$Parameter 如Personal_MainActivity$$Parameter
+                    String finalClassName = typeElement.getSimpleName() + ProcessorConfig.PARAMETER_FILE_NAME;
+                    messager.printMessage(Diagnostic.Kind.NOTE,"APT生成的类文件："+ className.packageName() + " . " + finalClassName);
 
-
-
-
-
+                    // 开始生成文件
+                    try {
+                        JavaFile.builder(className.packageName(), //包名
+                                TypeSpec.classBuilder(finalClassName) // 类名
+                                .addSuperinterface(ClassName.get(parameterType)) // implements ParameterGet 实现ParameterGetLoad接口
+                                .addModifiers(Modifier.PUBLIC) // public 修饰符
+                                .addMethod(factory.build()) // 方法的构建 （方法参数 + 方法体）
+                                .build()) // 类构建完成
+                                .build() //JavaFile 构建完成
+                                .writeTo(filer);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
-
         }
-
         return false;
     }
 }
